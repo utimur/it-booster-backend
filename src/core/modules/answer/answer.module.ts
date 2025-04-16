@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AnswerService } from './answer.service';
 import { AnswerController } from './answer.controller';
-import { PrismaService } from '@/configuration/db/PrismaService/PrismaSerivce';
+import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
 import { AnswerRepository } from './answer.repository';
 
 @Module({

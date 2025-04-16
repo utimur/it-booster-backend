@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
-import { PrismaService } from '@/configuration/db/PrismaService/PrismaSerivce';
+import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
+import { Question, Prisma } from '@prisma/client';
 
 @Injectable()
 export class QuestionRepository {
     constructor(private prisma: PrismaService) {}
 
-    create(createQuestionDto: CreateQuestionDto) {
+    create(createQuestionDto: Prisma.QuestionCreateInput): Promise<Question> {
         return this.prisma.question.create({
             data: {
                 ...createQuestionDto,
@@ -15,15 +14,18 @@ export class QuestionRepository {
         });
     }
 
-    findAll() {
+    findAll(): Promise<Question[]> {
         return this.prisma.question.findMany();
     }
 
-    findOne(id: number) {
+    findOne(id: number): Promise<Question | null> {
         return this.prisma.question.findUnique({ where: { id: id } });
     }
 
-    update(id: number, updateQuestionDto: UpdateQuestionDto) {
+    update(
+        id: number,
+        updateQuestionDto: Prisma.QuestionUpdateInput,
+    ): Promise<Question> {
         return this.prisma.question.update({
             data: {
                 ...updateQuestionDto,
@@ -32,7 +34,7 @@ export class QuestionRepository {
         });
     }
 
-    remove(id: number) {
+    remove(id: number): Promise<Question> {
         return this.prisma.question.delete({ where: { id: id } });
     }
 }

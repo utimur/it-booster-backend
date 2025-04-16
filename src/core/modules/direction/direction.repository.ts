@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDirectionDto } from './dto/create-direction.dto';
-import { UpdateDirectionDto } from './dto/update-direction.dto';
-import { PrismaService } from '@/configuration/db/PrismaService/PrismaSerivce';
+import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
+import { Direction, Prisma } from '@prisma/client';
 
 @Injectable()
 export class DirectionRepository {
     constructor(private prisma: PrismaService) {}
 
-    create(createDirectionDto: CreateDirectionDto) {
+    create(
+        createDirectionDto: Prisma.DirectionCreateInput,
+    ): Promise<Direction> {
         return this.prisma.direction.create({
             data: {
                 ...createDirectionDto,
@@ -15,15 +16,18 @@ export class DirectionRepository {
         });
     }
 
-    findAll() {
+    findAll(): Promise<Direction[]> {
         return this.prisma.direction.findMany();
     }
 
-    findOne(id: number) {
+    findOne(id: number): Promise<Direction | null> {
         return this.prisma.direction.findUnique({ where: { id: id } });
     }
 
-    update(id: number, updateDirectionDto: UpdateDirectionDto) {
+    update(
+        id: number,
+        updateDirectionDto: Prisma.DirectionUpdateInput,
+    ): Promise<Direction> {
         return this.prisma.direction.update({
             data: {
                 ...updateDirectionDto,
@@ -32,7 +36,7 @@ export class DirectionRepository {
         });
     }
 
-    remove(id: number) {
+    remove(id: number): Promise<Direction> {
         return this.prisma.direction.delete({ where: { id: id } });
     }
 }

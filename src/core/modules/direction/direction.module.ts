@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DirectionService } from './direction.service';
 import { DirectionController } from './direction.controller';
 import { DirectionRepository } from './direction.repository';
-import { PrismaService } from '@/configuration/db/PrismaService/PrismaSerivce';
+import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
 
 @Module({
     controllers: [DirectionController],

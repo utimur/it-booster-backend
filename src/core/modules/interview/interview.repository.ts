@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
-import { PrismaService } from '@/configuration/db/PrismaService/PrismaSerivce';
+import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
+import { Interview, Prisma } from '@prisma/client';
 
 @Injectable()
 export class InterviewRepository {
     constructor(private prisma: PrismaService) {}
 
-    create(createInterviewDto: CreateInterviewDto) {
+    create(
+        createInterviewDto: Prisma.InterviewCreateInput,
+    ): Promise<Interview> {
         return this.prisma.interview.create({
             data: {
                 ...createInterviewDto,
@@ -15,15 +18,18 @@ export class InterviewRepository {
         });
     }
 
-    findAll() {
+    findAll(): Promise<Interview[]> {
         return this.prisma.interview.findMany();
     }
 
-    findOne(id: number) {
+    findOne(id: number): Promise<Interview | null> {
         return this.prisma.interview.findUnique({ where: { id: id } });
     }
 
-    update(id: number, updateInterviewDto: UpdateInterviewDto) {
+    update(
+        id: number,
+        updateInterviewDto: Prisma.InterviewUpdateInput,
+    ): Promise<Interview> {
         return this.prisma.interview.update({
             data: {
                 ...updateInterviewDto,
@@ -32,7 +38,7 @@ export class InterviewRepository {
         });
     }
 
-    remove(id: number) {
+    remove(id: number): Promise<Interview> {
         return this.prisma.interview.delete({ where: { id: id } });
     }
 }

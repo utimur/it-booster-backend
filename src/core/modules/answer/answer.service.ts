@@ -7,8 +7,11 @@ import { AnswerRepository } from './answer.repository';
 export class AnswerService {
     constructor(private readonly answerRepository: AnswerRepository) {}
 
-    create(createAnswerDto: CreateAnswerDto) {
-        return this.answerRepository.create(createAnswerDto);
+    create({ isCorrect, text }: CreateAnswerDto) {
+        return this.answerRepository.create({
+            text,
+            isCorrect,
+        });
     }
 
     findAll() {
@@ -19,8 +22,12 @@ export class AnswerService {
         return this.answerRepository.findOne(id);
     }
 
-    update(id: number, updateAnswerDto: UpdateAnswerDto) {
-        return this.answerRepository.update(id, updateAnswerDto);
+    update(id: number, { isCorrect, text }: UpdateAnswerDto) {
+        return this.answerRepository.update(id, {
+            isCorrect,
+            text,
+            updatedAt: new Date(),
+        });
     }
 
     remove(id: number) {

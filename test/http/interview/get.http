@@ -1,0 +1,2 @@
+GET http://localhost:3000/interview/1
+Accept: application/json

@@ -1,1 +1,4 @@
-export class CreateInterviewDto {}
+export class CreateInterviewDto {
+    authorId: number;
+    categoryIds: number[];
+}

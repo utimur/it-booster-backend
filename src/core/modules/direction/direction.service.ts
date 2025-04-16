@@ -7,8 +7,10 @@ import { DirectionRepository } from './direction.repository';
 export class DirectionService {
     constructor(private readonly directionRepository: DirectionRepository) {}
 
-    create(createDirectionDto: CreateDirectionDto) {
-        return this.directionRepository.create(createDirectionDto);
+    create({ title }: CreateDirectionDto) {
+        return this.directionRepository.create({
+            title,
+        });
     }
 
     findAll() {
@@ -19,8 +21,11 @@ export class DirectionService {
         return this.directionRepository.findOne(id);
     }
 
-    update(id: number, updateDirectionDto: UpdateDirectionDto) {
-        return this.directionRepository.update(id, updateDirectionDto);
+    update(id: number, { title }: UpdateDirectionDto) {
+        return this.directionRepository.update(id, {
+            title,
+            updatedAt: new Date(),
+        });
     }
 
     remove(id: number) {

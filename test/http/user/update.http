@@ -1,0 +1,15 @@
+PUT http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "title": "Frontend"
+}
+
+###
+
+PUT http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "title": "Backend"
+}

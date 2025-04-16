@@ -1,1 +1,4 @@
-export class CreateAnswerDto {}
+export class CreateAnswerDto {
+    text: string;
+    isCorrect: boolean;
+}

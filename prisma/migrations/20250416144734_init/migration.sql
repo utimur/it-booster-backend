@@ -1,13 +1,37 @@
 -- CreateEnum
 CREATE TYPE "QuestionType" AS ENUM ('radio', 'checkbox', 'task', 'text', 'input');
 
--- AlterTable
-ALTER TABLE "Interview" ADD COLUMN     "completedAt" TIMESTAMP(3),
-ADD COLUMN     "startedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+-- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('admin', 'user', 'manager', 'mentor');
 
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "firstLoginAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "lastVisitAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "role" "UserRole" NOT NULL DEFAULT 'user',
+    "firstLoginAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastVisitAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Session" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "token" TEXT NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Interview" (
+    "id" SERIAL NOT NULL,
+    "authorId" INTEGER NOT NULL,
+    "startedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "completedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Interview_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Question" (
@@ -104,6 +128,12 @@ CREATE UNIQUE INDEX "InterviewQuestionAnswer_answerId_key" ON "InterviewQuestion
 
 -- CreateIndex
 CREATE INDEX "_CategoryToInterview_B_index" ON "_CategoryToInterview"("B");
+
+-- AddForeignKey
+ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Interview" ADD CONSTRAINT "Interview_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Question" ADD CONSTRAINT "Question_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -7,8 +7,8 @@ import { CategoryRepository } from './category.repository';
 export class CategoryService {
     constructor(private readonly categoryRepository: CategoryRepository) {}
 
-    create(createCategoryDto: CreateCategoryDto) {
-        return this.categoryRepository.create(createCategoryDto);
+    create({ title }: CreateCategoryDto) {
+        return this.categoryRepository.create({ title });
     }
 
     findAll() {
@@ -19,8 +19,11 @@ export class CategoryService {
         return this.categoryRepository.findOne(id);
     }
 
-    update(id: number, updateCategoryDto: UpdateCategoryDto) {
-        return this.categoryRepository.update(id, updateCategoryDto);
+    update(id: number, { title }: UpdateCategoryDto) {
+        return this.categoryRepository.update(id, {
+            title,
+            updatedAt: new Date(),
+        });
     }
 
     remove(id: number) {

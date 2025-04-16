@@ -1,4 +1,16 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateQuestionDto } from './create-question.dto';
+import { IsNotEmpty } from 'class-validator';
+import { QuestionType } from '@prisma/client';
 
-export class UpdateQuestionDto extends PartialType(CreateQuestionDto) {}
+export class UpdateQuestionDto {
+    @IsNotEmpty()
+    type: QuestionType;
+
+    @IsNotEmpty()
+    text: string;
+
+    @IsNotEmpty()
+    categoryId: number;
+
+    @IsNotEmpty()
+    directionId: number;
+}
