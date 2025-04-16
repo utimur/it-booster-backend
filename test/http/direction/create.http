@@ -1,0 +1,15 @@
+POST http://localhost:3000/direction
+Content-Type: application/json
+
+{
+  "title": "Frontend"
+}
+
+###
+
+POST http://localhost:3000/direction
+Content-Type: application/json
+
+{
+  "title": "Backend"
+}

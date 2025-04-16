@@ -22,6 +22,7 @@ $ npm run start:prod
 ```
 
 ## Тесты
+Основные тесты - ручные http. Лежат в test/http
 
 ```bash
 # unit tests
@@ -34,3 +35,11 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Работа с БД
+
+Для индексации в вебшторм сделать exlude папки /node_modules/.prisma и /node_modules/@prisma
+
+```bash
+# Запуск и анализ записей в БД
+$ prisma studio
+```

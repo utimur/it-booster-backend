@@ -13,18 +13,100 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  posts Post[]
+enum QuestionType {
+  radio
+  checkbox
+  task
+  text
+  input
 }
 
-model Post {
-  id        Int      @default(autoincrement()) @id
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model User {
+  id    Int    @id @default(autoincrement())
+  interviews Interview[]
+
+  firstLoginAt DateTime @default(now())
+  lastVisitAt DateTime @default(now())
+}
+
+model Interview {
+  id    Int    @id @default(autoincrement())
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  startedAt DateTime @default(now())
+  completedAt DateTime?
+
+  interviewQuestions InterviewQuestion[]
+  categories Category[]
+}
+
+model Question {
+  id    Int    @id @default(autoincrement())
+  type QuestionType
+  text String
+
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int  @unique
+  direction Direction @relation(fields: [directionId], references: [id])
+  directionId Int  @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  interviewQuestions InterviewQuestion[]
+}
+
+model Answer {
+  id    Int    @id @default(autoincrement())
+  text String
+  isCorrect Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  interviewAnswer InterviewQuestionAnswer?
+ }
+
+model Direction {
+  id    Int    @id @default(autoincrement())
+  title String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  Questions Question[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  title String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  questions Question[]
+  interviews Interview[]
+}
+
+model InterviewQuestion {
+  position Int
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+
+  interview Interview @relation(fields: [interviewId], references: [id])
+  interviewId Int  @unique
+  question Question @relation(fields: [questionId], references: [id])
+  questionId Int  @unique
+
+  @@id([interviewId, questionId])
+}
+
+model InterviewQuestionAnswer {
+  id    Int    @id @default(autoincrement())
+  answeredAt DateTime @default(now())
+
+
+  answer Answer @relation(fields: [answerId], references: [id])
+  answerId Int  @unique
 }
