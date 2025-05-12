@@ -1,0 +1,401 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "interviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Interview"
+          }
+        },
+        "role": {
+          "type": "string",
+          "default": "user",
+          "enum": [
+            "admin",
+            "user",
+            "manager",
+            "mentor"
+          ]
+        },
+        "firstName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "username": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "photoUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "telegramId": {
+          "type": "integer"
+        },
+        "firstLoginAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastVisitAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Session": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Session"
+          }
+        }
+      },
+      "required": [
+        "authDate",
+        "telegramId"
+      ]
+    },
+    "Session": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "tgHash": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId",
+        "tgHash",
+        "token"
+      ]
+    },
+    "Interview": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "author": {
+          "$ref": "#/definitions/User"
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "interviewQuestions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InterviewQuestion"
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Category"
+          }
+        },
+        "direction": {
+          "$ref": "#/definitions/Direction"
+        }
+      },
+      "required": [
+        "authorId",
+        "directionId"
+      ]
+    },
+    "Question": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "radio",
+            "checkbox",
+            "task",
+            "text",
+            "input"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
+        },
+        "direction": {
+          "$ref": "#/definitions/Direction"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Answer"
+          }
+        },
+        "interviewQuestions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InterviewQuestion"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "text",
+        "title",
+        "categoryId",
+        "directionId"
+      ]
+    },
+    "Answer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        },
+        "isCorrect": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "correctValue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "question": {
+          "$ref": "#/definitions/Question"
+        },
+        "interviewAnswers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InterviewQuestionAnswer"
+          }
+        }
+      },
+      "required": [
+        "text",
+        "questionId"
+      ]
+    },
+    "Direction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Question"
+          }
+        },
+        "Interviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Interview"
+          }
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Question"
+          }
+        },
+        "interviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Interview"
+          }
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "InterviewQuestion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "interview": {
+          "$ref": "#/definitions/Interview"
+        },
+        "question": {
+          "$ref": "#/definitions/Question"
+        },
+        "interviewQuestionAnswers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InterviewQuestionAnswer"
+          }
+        }
+      },
+      "required": [
+        "position",
+        "interviewId",
+        "questionId"
+      ]
+    },
+    "InterviewQuestionAnswer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "answeredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "answer": {
+          "$ref": "#/definitions/Answer"
+        },
+        "interviewQuestion": {
+          "$ref": "#/definitions/InterviewQuestion"
+        }
+      },
+      "required": [
+        "answerId",
+        "interviewQuestionId"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "user": {
+      "$ref": "#/definitions/User"
+    },
+    "session": {
+      "$ref": "#/definitions/Session"
+    },
+    "interview": {
+      "$ref": "#/definitions/Interview"
+    },
+    "question": {
+      "$ref": "#/definitions/Question"
+    },
+    "answer": {
+      "$ref": "#/definitions/Answer"
+    },
+    "direction": {
+      "$ref": "#/definitions/Direction"
+    },
+    "category": {
+      "$ref": "#/definitions/Category"
+    },
+    "interviewQuestion": {
+      "$ref": "#/definitions/InterviewQuestion"
+    },
+    "interviewQuestionAnswer": {
+      "$ref": "#/definitions/InterviewQuestionAnswer"
+    }
+  }
+}

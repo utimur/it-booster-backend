@@ -1,0 +1,53 @@
+POST http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "firstName": "Ulbi",
+  "lastName": "Timur",
+  "username": "timap_07",
+  "photoUrl": null,
+  "telegramId": 385456129
+}
+
+###
+POST http://localhost:3000/category
+Content-Type: application/json
+
+{
+  "title": "JavaScript"
+}
+
+###
+POST http://localhost:3000/category
+Content-Type: application/json
+
+{
+  "title": "React"
+}
+
+###
+POST http://localhost:3000/direction
+Content-Type: application/json
+
+{
+  "title": "Backend"
+}
+
+###
+POST http://localhost:3000/direction
+Content-Type: application/json
+
+{
+  "title": "Frontend"
+}
+
+###
+
+POST http://localhost:3000/interview
+Content-Type: application/json
+
+{
+"authorId": 1,
+"categoryIds": [1, 2],
+"directionId": 1
+}

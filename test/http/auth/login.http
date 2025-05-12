@@ -1,0 +1,12 @@
+POST http://localhost:3000/auth/tg/login
+Content-Type: application/json
+
+{
+  "firstName": "firstName",
+  "lastName": "lastName",
+  "username": "username",
+  "authDate":"2025-04-16T12:00:00.000Z",
+  "photoUrl": "photoUrl",
+  "hash": "hash",
+  "telegramId": 123
+}
