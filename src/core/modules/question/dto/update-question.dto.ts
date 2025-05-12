@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { QuestionType } from '@prisma/client';
+import { QuestionType } from '@generated/client';
 
 export class UpdateQuestionDto {
     @IsNotEmpty()

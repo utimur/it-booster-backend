@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -13,6 +14,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator jsonSchema {
+  provider              = "prisma-json-schema-generator"
+  includeRequiredFields = "true"
+}
 enum QuestionType {
   radio
   checkbox
@@ -29,63 +34,78 @@ enum UserRole {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   interviews Interview[]
-  role UserRole @default(user)
+  role       UserRole    @default(user)
 
-  firstLoginAt DateTime @default(now())
-  lastVisitAt DateTime @default(now())
+  firstName  String?
+  lastName   String?
+  username   String?
+  authDate   DateTime
+  photoUrl   String?
+  telegramId Int      @unique
 
-  sessions Session[]
+  firstLoginAt DateTime  @default(now())
+  lastVisitAt  DateTime  @default(now())
+  Session      Session[]
 }
 
 model Session {
-  id    Int    @id @default(autoincrement())
-
-  user User @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
   userId Int
-
-  token String
+  tgHash String
+  token  String
 }
 
 model Interview {
-  id    Int    @id @default(autoincrement())
-  author User @relation(fields: [authorId], references: [id])
+  id       Int  @id @default(autoincrement())
+  author   User @relation(fields: [authorId], references: [id])
   authorId Int
 
-  startedAt DateTime @default(now())
+  startedAt   DateTime  @default(now())
   completedAt DateTime?
 
   interviewQuestions InterviewQuestion[]
-  categories Category[]
+  categories         Category[]
+
+  direction   Direction @relation(fields: [directionId], references: [id])
+  directionId Int
 }
 
 model Question {
-  id    Int    @id @default(autoincrement())
-  type QuestionType
-  text String
+  id    Int          @id @default(autoincrement())
+  type  QuestionType
+  text  String
+  title String
 
-  category Category @relation(fields: [categoryId], references: [id])
-  categoryId Int  @unique
-  direction Direction @relation(fields: [directionId], references: [id])
-  directionId Int  @unique
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  direction   Direction @relation(fields: [directionId], references: [id])
+  directionId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
+  answers            Answer[]
   interviewQuestions InterviewQuestion[]
 }
 
 model Answer {
-  id    Int    @id @default(autoincrement())
-  text String
-  isCorrect Boolean
+  id        Int      @id @default(autoincrement())
+  text      String
+  isCorrect Boolean?
+
+  correctValue String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  interviewAnswer InterviewQuestionAnswer?
- }
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
+
+  interviewAnswers InterviewQuestionAnswer[]
+}
 
 model Direction {
   id    Int    @id @default(autoincrement())
@@ -94,7 +114,8 @@ model Direction {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  Questions Question[]
+  Questions  Question[]
+  Interviews Interview[]
 }
 
 model Category {
@@ -104,28 +125,31 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  questions Question[]
+  questions  Question[]
   interviews Interview[]
 }
 
 model InterviewQuestion {
-  position Int
-  createdAt DateTime @default(now())
+  id          Int       @id @default(autoincrement())
+  position    Int
+  createdAt   DateTime  @default(now())
   completedAt DateTime?
 
-  interview Interview @relation(fields: [interviewId], references: [id])
-  interviewId Int  @unique
-  question Question @relation(fields: [questionId], references: [id])
-  questionId Int  @unique
+  interview   Interview @relation(fields: [interviewId], references: [id])
+  interviewId Int
+  question    Question  @relation(fields: [questionId], references: [id])
+  questionId  Int
 
-  @@id([interviewId, questionId])
+  interviewQuestionAnswers InterviewQuestionAnswer[]
 }
 
 model InterviewQuestionAnswer {
-  id    Int    @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   answeredAt DateTime @default(now())
 
+  answer   Answer @relation(fields: [answerId], references: [id])
+  answerId Int
 
-  answer Answer @relation(fields: [answerId], references: [id])
-  answerId Int  @unique
+  interviewQuestion   InterviewQuestion @relation(fields: [interviewQuestionId], references: [id])
+  interviewQuestionId Int
 }

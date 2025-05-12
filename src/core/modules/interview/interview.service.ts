@@ -3,20 +3,22 @@ import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
 import { InterviewRepository } from './interview.repository';
 import { connectById, connectByIds } from '@/shared/lib/prisma/connectById';
+import { RepeatInterviewDto } from '@/core/modules/interview/dto/repeat-interview.dto';
 
 @Injectable()
 export class InterviewService {
     constructor(private readonly interviewRepository: InterviewRepository) {}
 
-    create({ categoryIds, authorId }: CreateInterviewDto) {
+    create({ categoryIds, authorId, directionId }: CreateInterviewDto) {
         return this.interviewRepository.create({
             author: connectById(authorId),
             categories: connectByIds(categoryIds),
+            direction: connectById(directionId),
         });
     }
 
-    findAll() {
-        return this.interviewRepository.findAll();
+    findAll({ authorId }: { authorId: number }) {
+        return this.interviewRepository.findAll({ authorId });
     }
 
     findOne(id: number) {
@@ -32,5 +34,9 @@ export class InterviewService {
 
     remove(id: number) {
         return this.interviewRepository.remove(id);
+    }
+
+    repeat(repeatInterviewDto: RepeatInterviewDto) {
+        return this.interviewRepository.repeat(repeatInterviewDto.interviewId);
     }
 }

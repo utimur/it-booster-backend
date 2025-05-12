@@ -11,7 +11,10 @@ import { TgAuthModule } from '@/core/modules/tg-auth/tg-auth.module';
 
 @Module({
     imports: [
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: '.env',
+        }),
         DirectionModule,
         UserModule,
         QuestionModule,

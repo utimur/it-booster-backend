@@ -7,8 +7,24 @@ import { UserRepository } from './user.repository';
 export class UserService {
     constructor(private readonly userRepository: UserRepository) {}
 
-    create(createUserDto: CreateUserDto) {
-        return this.userRepository.create(createUserDto);
+    create({
+        photoUrl,
+        firstName,
+        lastName,
+        telegramId,
+        role,
+        username,
+        authDate,
+    }: CreateUserDto) {
+        return this.userRepository.create({
+            photoUrl,
+            firstName,
+            lastName,
+            telegramId,
+            role,
+            username,
+            authDate,
+        });
     }
 
     findAll() {

@@ -1,9 +1,9 @@
 export class AuthTgDto {
-    id: number;
     firstName?: string;
     lastName?: string;
     username?: string;
     authDate: Date;
-    photo_url?: string;
+    photoUrl?: string;
     hash: string;
+    telegramId: number;
 }

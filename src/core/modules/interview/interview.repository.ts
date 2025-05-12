@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateInterviewDto } from './dto/create-interview.dto';
-import { UpdateInterviewDto } from './dto/update-interview.dto';
 import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
-import { Interview, Prisma } from '@prisma/client';
+import { Interview, Prisma } from '@generated/client';
 
 @Injectable()
 export class InterviewRepository {
@@ -18,8 +16,26 @@ export class InterviewRepository {
         });
     }
 
-    findAll(): Promise<Interview[]> {
-        return this.prisma.interview.findMany();
+    findAll({ authorId }: { authorId: number }): Promise<Interview[]> {
+        return this.prisma.interview.findMany({
+            where: {
+                authorId,
+            },
+            include: {
+                _count: true,
+                interviewQuestions: {
+                    include: {
+                        question: {
+                            include: {
+                                _count: true,
+                            },
+                        },
+                    },
+                },
+                direction: true,
+                categories: true,
+            },
+        });
     }
 
     findOne(id: number): Promise<Interview | null> {
@@ -40,5 +56,26 @@ export class InterviewRepository {
 
     remove(id: number): Promise<Interview> {
         return this.prisma.interview.delete({ where: { id: id } });
+    }
+
+    async repeat(interviewId: number) {
+        await this.prisma.interviewQuestionAnswer.deleteMany({
+            where: {
+                interviewQuestion: {
+                    interviewId,
+                },
+            },
+        });
+
+        await this.prisma.interviewQuestion.updateManyAndReturn({
+            data: {
+                completedAt: null,
+            },
+            where: {
+                interview: {
+                    id: interviewId,
+                },
+            },
+        });
     }
 }

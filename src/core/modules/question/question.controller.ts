@@ -30,6 +30,22 @@ export class QuestionController {
         return this.questionService.findOne(+id);
     }
 
+    @Get('interview/:id')
+    findByInterviewId(@Param('id') id: string) {
+        return this.questionService.findByInterviewId({ interviewId: +id });
+    }
+
+    @Get('interview/:id/position/:position')
+    findByIPosition(
+        @Param('id') id: string,
+        @Param('position') position: string,
+    ) {
+        return this.questionService.findOneByPosition({
+            interviewId: +id,
+            position: +position,
+        });
+    }
+
     @Patch(':id')
     update(
         @Param('id') id: string,

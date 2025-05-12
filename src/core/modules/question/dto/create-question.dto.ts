@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { QuestionType } from '@prisma/client';
+import { QuestionType } from '@generated/client';
 
 export class CreateQuestionDto {
     @IsNotEmpty()
@@ -7,6 +7,9 @@ export class CreateQuestionDto {
 
     @IsNotEmpty()
     text: string;
+
+    @IsNotEmpty()
+    title: string;
 
     @IsNotEmpty()
     categoryId: number;
