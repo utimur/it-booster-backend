@@ -159,6 +159,10 @@
         "title": {
           "type": "string"
         },
+        "explanation": {
+          "type": "string",
+          "default": ""
+        },
         "category": {
           "$ref": "#/definitions/Category"
         },

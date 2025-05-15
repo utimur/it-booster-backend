@@ -35,6 +35,11 @@ export class QuestionController {
         return this.questionService.findByInterviewId({ interviewId: +id });
     }
 
+    @Get('database/:id')
+    findByDirectionId(@Param('id') id: string) {
+        return this.questionService.findAllByDirection({ directionId: +id });
+    }
+
     @Get('interview/:id/position/:position')
     findByIPosition(
         @Param('id') id: string,

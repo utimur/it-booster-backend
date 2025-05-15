@@ -21,7 +21,7 @@
     "prisma:generate": "prisma generate",
     "prisma:init": "prisma migrate dev --name init",
     "prisma:studio": "prisma studio",
-    "seed": "ts-node scripts/fake-data-generator/index.ts",
+    "seed": "prisma db seed",
     "generate:types": "ts-node ./scripts/generate-types.ts"
   },
   "dependencies": {
@@ -87,5 +87,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "ts-node scripts/fake-data-generator/index.ts"
   }
 }

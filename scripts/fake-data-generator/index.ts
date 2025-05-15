@@ -7,6 +7,26 @@ import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
+function generateFakeMarkdown(): string {
+    const title = `# ${faker.company.catchPhrase()}`;
+    const subtitle = `## ${faker.company.name()}`;
+
+    const paragraph = () => `\n${faker.lorem.paragraphs(2)}`;
+    const list = () =>
+        `- ${faker.lorem.words(3)}\n- ${faker.lorem.words(3)}- ${faker.lorem.words(3)}`;
+    const codeBlock = () =>
+        `\`\`\`js\nconsole.log('${faker.hacker.phrase()}')\n\`\`\``;
+
+    return `${title}
+        ${subtitle}
+        ${paragraph()}
+        ${list()}
+        ${codeBlock()}
+        ${paragraph()}
+        ${subtitle}
+    `;
+}
+
 async function main() {
     const directionTitles = faker.helpers.uniqueArray(
         () => faker.name.jobTitle(),
@@ -31,7 +51,7 @@ async function main() {
 
     const mainUser = await prisma.user.create({
         data: {
-            role: UserRole.user,
+            role: UserRole.admin,
             firstName: 'Ulbi',
             lastName: 'Timur',
             username: 'timap_07',
@@ -86,6 +106,7 @@ async function main() {
                     type: faker.helpers.arrayElement(
                         Object.values(QuestionType),
                     ),
+                    explanation: generateFakeMarkdown(),
                     categoryId: category.id,
                     directionId: direction.id,
                 },

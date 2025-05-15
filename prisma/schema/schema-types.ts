@@ -55,6 +55,7 @@ export interface Question {
   type: QuestionType;
   text: string;
   title: string;
+  explanation: string;
   category?: Category;
   categoryId: number;
   direction?: Direction;

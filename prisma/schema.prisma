@@ -79,6 +79,8 @@ model Question {
   text  String
   title String
 
+  explanation String @default("")
+
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   direction   Direction @relation(fields: [directionId], references: [id])

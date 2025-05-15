@@ -27,6 +27,10 @@ export class QuestionService {
         return this.questionRepository.findByInterviewId({ interviewId });
     }
 
+    findAllByDirection({ directionId }: { directionId: number }) {
+        return this.questionRepository.findAllByDirection({ directionId });
+    }
+
     findOneByPosition({
         interviewId,
         position,

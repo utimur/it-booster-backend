@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/configuration/db/PrismaService/PrismaService';
-import { Question, Prisma, InterviewQuestion } from '@generated/client';
+import {
+    Question,
+    Prisma,
+    InterviewQuestion,
+    Direction,
+} from '@generated/client';
 
 @Injectable()
 export class QuestionRepository {
@@ -59,6 +64,22 @@ export class QuestionRepository {
                                 questionId: true,
                             },
                         },
+                    },
+                },
+            },
+        });
+    }
+
+    findAllByDirection({ directionId }: { directionId: number }) {
+        console.log({ directionId });
+        return this.prisma.category.findMany({
+            include: {
+                questions: true,
+            },
+            where: {
+                questions: {
+                    some: {
+                        directionId,
                     },
                 },
             },
