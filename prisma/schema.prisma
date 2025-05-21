@@ -127,6 +127,11 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
+  parent   Category? @relation("CategoryToChildren", fields: [parentId], references: [id])
+  parentId Int?
+
+  children Category[] @relation("CategoryToChildren")
+
   questions  Question[]
   interviews Interview[]
 }

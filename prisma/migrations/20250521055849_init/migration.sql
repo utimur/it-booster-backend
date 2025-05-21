@@ -46,6 +46,8 @@ CREATE TABLE "Question" (
     "id" SERIAL NOT NULL,
     "type" "QuestionType" NOT NULL,
     "text" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "explanation" TEXT NOT NULL DEFAULT '',
     "categoryId" INTEGER NOT NULL,
     "directionId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -58,9 +60,11 @@ CREATE TABLE "Question" (
 CREATE TABLE "Answer" (
     "id" SERIAL NOT NULL,
     "text" TEXT NOT NULL,
-    "isCorrect" BOOLEAN NOT NULL,
+    "isCorrect" BOOLEAN,
+    "correctValue" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "questionId" INTEGER NOT NULL,
 
     CONSTRAINT "Answer_pkey" PRIMARY KEY ("id")
 );
@@ -81,6 +85,7 @@ CREATE TABLE "Category" (
     "title" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "parentId" INTEGER,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -119,31 +124,10 @@ CREATE TABLE "_CategoryToInterview" (
 CREATE UNIQUE INDEX "User_telegramId_key" ON "User"("telegramId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Interview_directionId_key" ON "Interview"("directionId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Question_categoryId_key" ON "Question"("categoryId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Question_directionId_key" ON "Question"("directionId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Direction_title_key" ON "Direction"("title");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_title_key" ON "Category"("title");
-
--- CreateIndex
-CREATE UNIQUE INDEX "InterviewQuestion_interviewId_key" ON "InterviewQuestion"("interviewId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "InterviewQuestion_questionId_key" ON "InterviewQuestion"("questionId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "InterviewQuestionAnswer_answerId_key" ON "InterviewQuestionAnswer"("answerId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "InterviewQuestionAnswer_interviewQuestionId_key" ON "InterviewQuestionAnswer"("interviewQuestionId");
 
 -- CreateIndex
 CREATE INDEX "_CategoryToInterview_B_index" ON "_CategoryToInterview"("B");
@@ -162,6 +146,12 @@ ALTER TABLE "Question" ADD CONSTRAINT "Question_categoryId_fkey" FOREIGN KEY ("c
 
 -- AddForeignKey
 ALTER TABLE "Question" ADD CONSTRAINT "Question_directionId_fkey" FOREIGN KEY ("directionId") REFERENCES "Direction"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Answer" ADD CONSTRAINT "Answer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Category" ADD CONSTRAINT "Category_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "InterviewQuestion" ADD CONSTRAINT "InterviewQuestion_interviewId_fkey" FOREIGN KEY ("interviewId") REFERENCES "Interview"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

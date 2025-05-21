@@ -92,6 +92,9 @@ export interface Category {
   title: string;
   createdAt: Date;
   updatedAt: Date;
+  parent?: Category;
+  parentId?: number;
+  children?: Category[];
   questions?: Question[];
   interviews?: Interview[];
 }

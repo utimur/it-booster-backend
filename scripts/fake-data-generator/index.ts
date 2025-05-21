@@ -5,7 +5,24 @@ import {
 } from '../../generated/prisma/client';
 import { faker } from '@faker-js/faker';
 
+type CategoryNode = { id?: any; parent: any; children: any[] };
+
 const prisma = new PrismaClient();
+
+function collectLeafCategories(categories: CategoryNode[]): CategoryNode[] {
+    const leaves: CategoryNode[] = [];
+
+    function traverse(node: CategoryNode) {
+        if (node.children.length === 0) {
+            leaves.push(node);
+        } else {
+            node.children.forEach(traverse);
+        }
+    }
+
+    categories.forEach(traverse);
+    return leaves;
+}
 
 function generateFakeMarkdown(): string {
     const title = `# ${faker.company.catchPhrase()}`;
@@ -43,11 +60,31 @@ async function main() {
         ),
     );
 
-    const categories = await Promise.all(
-        categoryTitles.map((title) =>
-            prisma.category.create({ data: { title } }),
-        ),
+    const parentCategoryTitles = faker.helpers.uniqueArray(
+        () => faker.word.noun(),
+        5,
     );
+
+    const categories: { id?: any; parent: any; children: any[] }[] = [];
+
+    for (const title of parentCategoryTitles) {
+        const parent = await prisma.category.create({
+            data: { title },
+        });
+
+        const children = await Promise.all(
+            Array.from({ length: 2 }).map(() =>
+                prisma.category.create({
+                    data: {
+                        title: `${title}-${faker.word.noun()}`,
+                        parent: { connect: { id: parent.id } }, // <- нужно изменить модель
+                    },
+                }),
+            ),
+        );
+
+        categories.push({ id: parent.id, parent, children });
+    }
 
     const mainUser = await prisma.user.create({
         data: {
@@ -93,10 +130,12 @@ async function main() {
         ),
     );
 
-    // Вопросы и ответы
+    // Соберём список всех подкатегорий
+    const flatSubcategories = categories.flatMap((c) => c.children);
+
     const questions = await Promise.all(
         Array.from({ length: 20 }).map(async () => {
-            const category = faker.helpers.arrayElement(categories);
+            const category = faker.helpers.arrayElement(flatSubcategories);
             const direction = faker.helpers.arrayElement(directions);
 
             const question = await prisma.question.create({

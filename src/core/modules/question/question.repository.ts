@@ -4,8 +4,83 @@ import {
     Question,
     Prisma,
     InterviewQuestion,
-    Direction,
+    Category,
 } from '@generated/client';
+
+export type CategoryNode = {
+    id: number;
+    title: string;
+    questions: Question[];
+    children: CategoryNode[];
+};
+
+function buildCategoryTree(
+    categories: Category[],
+    questionMap: Map<number, Question[]>,
+): CategoryNode[] {
+    const idToCategory: Record<
+        number,
+        Category & { questions: Question[]; children: Category[] }
+    > = {};
+    const rootCategories: (Category & {
+        questions: Question[];
+        children: Category[];
+    })[] = [];
+
+    // Расширяем категории
+    for (const cat of categories) {
+        idToCategory[cat.id] = {
+            ...cat,
+            questions: [],
+            children: [],
+        };
+    }
+
+    // Привязываем вопросы к категориям
+    for (const [categoryId, qs] of questionMap.entries()) {
+        if (idToCategory[categoryId]) {
+            idToCategory[categoryId].questions = qs;
+        }
+    }
+
+    // Строим иерархию
+    for (const category of Object.values(idToCategory)) {
+        if (category.parentId != null) {
+            const parent = idToCategory[category.parentId];
+            if (parent) {
+                parent.children.push(category);
+            }
+        } else {
+            rootCategories.push(category);
+        }
+    }
+
+    // Фильтруем дерево и возвращаем только нужные ветки
+    function filterEmptyBranches(
+        cat: Category & { questions: Question[]; children: Category[] },
+    ): CategoryNode | null {
+        const filteredChildren: CategoryNode[] = cat.children
+            .map((child) => filterEmptyBranches(idToCategory[child.id]))
+            .filter((c): c is CategoryNode => c !== null);
+
+        const hasQuestions = cat.questions.length > 0;
+
+        if (hasQuestions || filteredChildren.length > 0) {
+            return {
+                id: cat.id,
+                title: cat.title,
+                questions: cat.questions,
+                children: filteredChildren,
+            };
+        }
+
+        return null;
+    }
+
+    return rootCategories
+        .map(filterEmptyBranches)
+        .filter((c): c is CategoryNode => c !== null);
+}
 
 @Injectable()
 export class QuestionRepository {
@@ -70,24 +145,39 @@ export class QuestionRepository {
         });
     }
 
-    findAllByDirection({ directionId }: { directionId: number }) {
-        console.log({ directionId });
-        return this.prisma.category.findMany({
+    async findAllByDirection({ directionId }: { directionId: number }) {
+        const questionsWithCategory = await this.prisma.question.findMany({
+            where: { directionId },
             include: {
-                questions: true,
-            },
-            where: {
-                questions: {
-                    some: {
-                        directionId,
-                    },
-                },
+                category: true,
             },
         });
+
+        const categoryIdToQuestions = new Map<number, Question[]>();
+
+        for (const question of questionsWithCategory) {
+            const catId = question.categoryId;
+            if (!categoryIdToQuestions.has(catId)) {
+                categoryIdToQuestions.set(catId, []);
+            }
+            categoryIdToQuestions.get(catId)!.push(question);
+        }
+
+        const allCategories = await this.prisma.category.findMany({
+            include: {
+                parent: true,
+                children: true,
+            },
+        });
+
+        return buildCategoryTree(allCategories, categoryIdToQuestions);
     }
 
     findOne(id: number): Promise<Question | null> {
-        return this.prisma.question.findUnique({ where: { id: id } });
+        return this.prisma.question.findUnique({
+            where: { id: id },
+            include: { category: true },
+        });
     }
 
     update(
